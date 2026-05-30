@@ -42,7 +42,6 @@ public class FriendsWebTest {
                 .openMenu()
                 .openFriendsPage()
                 .checkIncomeRequestBeVisible(user.friend());
-
     }
 
     @Test
