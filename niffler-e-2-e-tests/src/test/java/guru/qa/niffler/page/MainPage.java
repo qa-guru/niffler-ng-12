@@ -8,6 +8,7 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 public class MainPage {
+  private final SelenideElement spendingTable = $("#spendings");
 
   private final ElementsCollection tableRows = $("table tbody").$$("tr");
   private final SelenideElement personIconButton = $("button > div > svg[data-testid='PersonIcon']");
@@ -16,17 +17,18 @@ public class MainPage {
 
 
 
+  public MainPage checkThatPageLoaded() {
+    spendingTable.should(visible);
+    return this;
+  }
 
-  public EditSpendingPage openSpendingByDescription(String description) {
-    tableRows.find(text(description))
-        .$$("td")
-        .get(5)
-        .click();
+  public EditSpendingPage editSpending(String description) {
+    spendingTable.$$("tbody tr").find(text(description)).$$("td").get(5).click();
     return new EditSpendingPage();
   }
 
-  public MainPage checkThatTableContainsSpending(String description) {
-    tableRows.find(text(description)).should(visible);
+  public MainPage checkThatTableContains(String description) {
+    spendingTable.$$("tbody tr").find(text(description)).should(visible);
     return this;
   }
 
