@@ -2,6 +2,9 @@ package guru.qa.niffler.jupiter.extension;
 
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
+import com.codeborne.selenide.Screenshots;
+import org.eclipse.jetty.server.Response;
+import org.openqa.selenium.OutputType;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.Allure;
 import io.qameta.allure.selenide.AllureSelenide;
