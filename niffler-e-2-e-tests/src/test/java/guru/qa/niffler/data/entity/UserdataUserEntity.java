@@ -1,20 +1,15 @@
-package guru.qa.niffler.data.entity.spend;
+package guru.qa.niffler.data.entity;
 
 import guru.qa.niffler.model.CurrencyValues;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Stream;
-
-import static jakarta.persistence.FetchType.EAGER;
+import java.util.UUID;
 
 @Getter
 @Setter
-public class UserEntity implements Serializable {
+public class UserdataUserEntity implements Serializable {
   private UUID id;
   private String username;
   private CurrencyValues currency;

@@ -3,11 +3,15 @@ package guru.qa.niffler.data.dao.impl;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.Databases;
 import guru.qa.niffler.data.dao.SpendDao;
-import guru.qa.niffler.data.entity.spend.CategoryEntity;
-import guru.qa.niffler.data.entity.spend.SpendEntity;
+import guru.qa.niffler.data.entity.CategoryEntity;
+import guru.qa.niffler.data.entity.SpendEntity;
 import guru.qa.niffler.model.CurrencyValues;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -111,7 +115,7 @@ public class SpendDaoJdbc implements SpendDao {
 
                         UUID categoryId = rs.getObject("category_id", UUID.class);
                         if (categoryId != null) {
-                            guru.qa.niffler.data.entity.spend.CategoryEntity category = new guru.qa.niffler.data.entity.spend.CategoryEntity();
+                            CategoryEntity category = new CategoryEntity();
                             category.setId(categoryId);
                             spend.setCategory(category);
                         }
@@ -151,7 +155,7 @@ public class SpendDaoJdbc implements SpendDao {
 
                         UUID categoryId = rs.getObject("category_id", UUID.class);
                         if (categoryId != null) {
-                            guru.qa.niffler.data.entity.spend.CategoryEntity category = new guru.qa.niffler.data.entity.spend.CategoryEntity();
+                            CategoryEntity category = new CategoryEntity();
                             category.setId(categoryId);
                             spend.setCategory(category);
                         }

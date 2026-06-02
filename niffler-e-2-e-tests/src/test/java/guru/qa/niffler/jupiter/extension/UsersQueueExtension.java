@@ -15,7 +15,13 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.*;
+import java.util.Queue;
+import java.util.List;
+import java.util.Optional;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.lang.reflect.Parameter;
@@ -30,12 +36,14 @@ public class UsersQueueExtension implements
     public enum Type {
         EMPTY, WITH_FRIEND, WITH_INCOME_REQUEST, WITH_OUTCOME_REQUEST
     }
+
     public record StaticUser(
             String username,
             String password,
             String friend,
             String income,
-            String outcome) {}
+            String outcome) {
+    }
 
     private static final Queue<StaticUser> EMPTY_USERS = new ConcurrentLinkedQueue<>();
     private static final Queue<StaticUser> WITH_FRIEND_USERS = new ConcurrentLinkedQueue<>();
@@ -46,16 +54,16 @@ public class UsersQueueExtension implements
         EMPTY_USERS.add(new StaticUser("Страшила", "1234", null, null, null));
         WITH_FRIEND_USERS.add(new StaticUser("Toto", "1234", "Elly", null, null));
         WITH_INCOME_REQUEST_USERS.add(new StaticUser("Elly", "4321", "ЖелезныйДровосек", null, null));
-        WITH_OUTCOME_REQUEST_USERS.add(new StaticUser("ЖелезныйДровосек", "4321", "Elly",null, null));
+        WITH_OUTCOME_REQUEST_USERS.add(new StaticUser("ЖелезныйДровосек", "4321", "Elly", null, null));
     }
 
     @Target(ElementType.PARAMETER)
     @Retention(RetentionPolicy.RUNTIME)
-    public @interface UserType{
+    public @interface UserType {
         Type value() default Type.EMPTY;
     }
 
-@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
         Parameter[] parameters = context.getRequiredTestMethod().getParameters();
@@ -63,30 +71,30 @@ public class UsersQueueExtension implements
         Map<Type, List<StaticUser>> userMap = context.getStore(NAMESPACE).getOrComputeIfAbsent(
                 context.getUniqueId(),
                 key -> new HashMap<>(),
-                        Map.class
-                );
-                for (Parameter p : parameters) {
-                    if (AnnotationSupport.isAnnotated(p, UserType.class)) {
-                        Type type = p.getAnnotation(UserType.class).value();
-                        Optional<StaticUser> user = Optional.empty();
-                        StopWatch sw = StopWatch.createStarted();
-                        while (user.isEmpty() && sw.getTime(TimeUnit.SECONDS) < 30) {
-                            user = switch (type) {
-                                case EMPTY -> Optional.ofNullable(EMPTY_USERS.poll());
-                                case WITH_FRIEND -> Optional.ofNullable(WITH_FRIEND_USERS.poll());
-                                case WITH_INCOME_REQUEST -> Optional.ofNullable(WITH_INCOME_REQUEST_USERS.poll());
-                                case WITH_OUTCOME_REQUEST -> Optional.ofNullable(WITH_OUTCOME_REQUEST_USERS.poll());
-                            };
-                        }
-                        if (user.isPresent()) {
-                            userMap.computeIfAbsent(type, k -> new ArrayList<>()).add(user.get());
-                        } else {
-
-                            rollbackUsers(userMap);
-                            throw new IllegalStateException("Can't find user after 30 sec for parameter: " + p.getName());
-                        }
-                    }
+                Map.class
+        );
+        for (Parameter p : parameters) {
+            if (AnnotationSupport.isAnnotated(p, UserType.class)) {
+                Type type = p.getAnnotation(UserType.class).value();
+                Optional<StaticUser> user = Optional.empty();
+                StopWatch sw = StopWatch.createStarted();
+                while (user.isEmpty() && sw.getTime(TimeUnit.SECONDS) < 30) {
+                    user = switch (type) {
+                        case EMPTY -> Optional.ofNullable(EMPTY_USERS.poll());
+                        case WITH_FRIEND -> Optional.ofNullable(WITH_FRIEND_USERS.poll());
+                        case WITH_INCOME_REQUEST -> Optional.ofNullable(WITH_INCOME_REQUEST_USERS.poll());
+                        case WITH_OUTCOME_REQUEST -> Optional.ofNullable(WITH_OUTCOME_REQUEST_USERS.poll());
+                    };
                 }
+                if (user.isPresent()) {
+                    userMap.computeIfAbsent(type, k -> new ArrayList<>()).add(user.get());
+                } else {
+
+                    rollbackUsers(userMap);
+                    throw new IllegalStateException("Can't find user after 30 sec for parameter: " + p.getName());
+                }
+            }
+        }
         Allure.getLifecycle().updateTestCase(testCase -> {
             testCase.setStart(new Date().getTime());
         });
@@ -142,7 +150,7 @@ public class UsersQueueExtension implements
         List<StaticUser> userList = map.get(type);
 
         if (userList == null || userList.isEmpty()) {
-            throw  new ParameterResolutionException("No users available for type: " + type);
+            throw new ParameterResolutionException("No users available for type: " + type);
         }
         return userList.remove(0);
     }
