@@ -7,6 +7,8 @@ import jakarta.transaction.UserTransaction;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.sql.DataSource;
+
+import static java.sql.Connection.TRANSACTION_READ_COMMITTED;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -29,10 +31,11 @@ public class Databases {
   public record XaConsumer(Consumer<Connection> function, String jdbcUrl) {
   }
 
-  public static <T> T transaction(Function<Connection, T> function, String jdbcUrl) {
+  public static <T> T transaction(Function<Connection, T> function, String jdbcUrl, int isolationLvl) {
     Connection connection = null;
     try {
       connection = connection(jdbcUrl);
+      connection.setTransactionIsolation(isolationLvl);
       connection.setAutoCommit(false);
       T result = function.apply(connection);
       connection.commit();
@@ -49,6 +52,10 @@ public class Databases {
       }
       throw new RuntimeException(e);
     }
+  }
+
+  public static <T> T transaction(Function<Connection, T> function, String jdbcUrl) {
+    return transaction(function, jdbcUrl, TRANSACTION_READ_COMMITTED);
   }
 
   public static <T> T xaTransaction(XaFunction<T>... actions) {
@@ -71,10 +78,11 @@ public class Databases {
     }
   }
 
-  public static void transaction(Consumer<Connection> consumer, String jdbcUrl) {
+  public static void transaction(Consumer<Connection> consumer, String jdbcUrl, int isolationLvl) {
     Connection connection = null;
     try {
       connection = connection(jdbcUrl);
+      connection.setTransactionIsolation(isolationLvl);
       connection.setAutoCommit(false);
       consumer.accept(connection);
       connection.commit();
@@ -90,6 +98,10 @@ public class Databases {
       }
       throw new RuntimeException(e);
     }
+  }
+
+  public static void transaction(Consumer<Connection> consumer, String jdbcUrl) {
+    transaction(consumer, jdbcUrl, TRANSACTION_READ_COMMITTED);
   }
 
   public static void xaTransaction(XaConsumer... actions) {
