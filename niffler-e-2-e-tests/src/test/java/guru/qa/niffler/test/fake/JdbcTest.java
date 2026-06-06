@@ -46,7 +46,7 @@ public class JdbcTest {
     UsersDbClient usersDbClient = new UsersDbClient();
     UserJson user = usersDbClient.createUser(
         "valentin-4",
-        "12345"
+        "123"
     );
     System.out.println(user);
   }
@@ -65,6 +65,7 @@ public class JdbcTest {
             CurrencyValues.RUB,
             null,
             null,
+            null,
             null
         )
     );
@@ -80,7 +81,7 @@ public class JdbcTest {
   void hibernateTest(String uname) {
     UserJson user = usersDbClient.createUser(
         uname,
-        "12345"
+        "123"
     );
 
     usersDbClient.addIncomeInvitation(user, 1);

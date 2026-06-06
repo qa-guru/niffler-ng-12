@@ -24,7 +24,7 @@ public class ProfileTest {
   @Test
   void archivedCategoryShouldPresentInCategoriesList(CategoryJson category) {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .successLogin("duck", "12345")
+        .successLogin("duck", "123")
         .checkThatPageLoaded();
 
     Selenide.open(CFG.frontUrl() + "profile", ProfilePage.class)
@@ -40,7 +40,7 @@ public class ProfileTest {
   @Test
   void activeCategoryShouldPresentInCategoriesList(CategoryJson category) {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .successLogin("duck", "12345")
+        .successLogin("duck", "123")
         .checkThatPageLoaded();
 
     Selenide.open(CFG.frontUrl() + "profile", ProfilePage.class)
