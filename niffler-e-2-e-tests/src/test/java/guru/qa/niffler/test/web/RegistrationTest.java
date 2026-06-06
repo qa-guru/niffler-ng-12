@@ -16,7 +16,7 @@ public class RegistrationTest {
   @Test
   void shouldRegisterNewUser() {
     String newUsername = randomUsername();
-    String password = "12345";
+    String password = "123";
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .doRegister()
         .fillRegisterPage(newUsername, password, password)
@@ -28,7 +28,7 @@ public class RegistrationTest {
   @Test
   void shouldNotRegisterUserWithExistingUsername() {
     String existingUsername = "duck";
-    String password = "12345";
+    String password = "123";
 
     LoginPage loginPage = Selenide.open(CFG.frontUrl(), LoginPage.class);
     loginPage.doRegister()
@@ -40,7 +40,7 @@ public class RegistrationTest {
   @Test
   void shouldShowErrorIfPasswordAndConfirmPasswordAreNotEqual() {
     String newUsername = randomUsername();
-    String password = "12345";
+    String password = "123";
 
     LoginPage loginPage = Selenide.open(CFG.frontUrl(), LoginPage.class);
     loginPage.doRegister()
