@@ -1,6 +1,5 @@
 package guru.qa.niffler.service;
 
-import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.CategoryDao;
 import guru.qa.niffler.data.dao.SpendDao;
 import guru.qa.niffler.data.dao.impl.CategoryDaoJdbc;
@@ -11,8 +10,6 @@ import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 
 public class SpendDbClient implements SpendClient {
-
-  private static final Config CFG = Config.getInstance();
 
   private final SpendDao spendDao = new SpendDaoJdbc();
   private final CategoryDao categoryDao = new CategoryDaoJdbc();
