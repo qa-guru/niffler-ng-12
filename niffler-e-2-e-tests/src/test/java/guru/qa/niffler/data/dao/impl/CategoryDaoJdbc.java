@@ -4,6 +4,8 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.CategoryDao;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,12 +17,14 @@ import java.util.UUID;
 
 import static guru.qa.niffler.data.tpl.Connections.holder;
 
+@ParametersAreNonnullByDefault
 public class CategoryDaoJdbc implements CategoryDao {
 
   private static final Config CFG = Config.getInstance();
   private static final String URL = CFG.spendJdbcUrl();
 
   @Override
+  @Nonnull
   public CategoryEntity create(CategoryEntity category) {
     try (PreparedStatement ps = holder(URL).connection().prepareStatement(
         "INSERT INTO category (username, name, archived) " +
@@ -49,6 +53,7 @@ public class CategoryDaoJdbc implements CategoryDao {
   }
 
   @Override
+  @Nonnull
   public Optional<CategoryEntity> findCategoryById(UUID id) {
     try (PreparedStatement ps = holder(URL).connection().prepareStatement(
         "SELECT * FROM category WHERE id = ?"
@@ -73,6 +78,7 @@ public class CategoryDaoJdbc implements CategoryDao {
   }
 
   @Override
+  @Nonnull
   public CategoryEntity update(CategoryEntity categoryEntity) {
     try (PreparedStatement ps = holder(URL).connection().prepareStatement(
         "UPDATE category SET name = ?, archived = ? WHERE id = ?"
@@ -88,6 +94,7 @@ public class CategoryDaoJdbc implements CategoryDao {
   }
 
   @Override
+  @Nonnull
   public Optional<CategoryEntity> findCategoryByUsernameAndCategoryName(String username, String categoryName) {
     try (PreparedStatement ps = holder(URL).connection().prepareStatement(
         "SELECT * FROM category WHERE username = ? AND name = ?"
@@ -113,6 +120,7 @@ public class CategoryDaoJdbc implements CategoryDao {
   }
 
   @Override
+  @Nonnull
   public List<CategoryEntity> findAllByUsername(String username) {
     try (PreparedStatement ps = holder(URL).connection().prepareStatement(
         "SELECT * FROM category WHERE username = ?"
@@ -149,6 +157,7 @@ public class CategoryDaoJdbc implements CategoryDao {
   }
 
   @Override
+  @Nonnull
   public List<CategoryEntity> findAll() {
     try (PreparedStatement ps = holder(URL).connection().prepareStatement(
         "SELECT * FROM category")) {

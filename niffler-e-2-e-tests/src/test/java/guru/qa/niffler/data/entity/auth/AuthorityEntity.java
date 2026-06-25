@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "authority")
+@ParametersAreNonnullByDefault
 public class AuthorityEntity implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)

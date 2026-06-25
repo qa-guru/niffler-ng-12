@@ -13,11 +13,14 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Optional;
 
 import static guru.qa.niffler.jupiter.extension.TestMethodContextExtension.context;
 
+@ParametersAreNonnullByDefault
 public class UserExtension implements
     BeforeEachCallback,
     ParameterResolver {
@@ -58,11 +61,13 @@ public class UserExtension implements
   }
 
   @Override
+  @Nonnull
   public UserJson resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws
       ParameterResolutionException {
     return createdUser().orElseThrow();
   }
 
+  @Nonnull
   public static Optional<UserJson> createdUser() {
     final ExtensionContext methodContext = context();
     return Optional.ofNullable(methodContext.getStore(NAMESPACE)

@@ -6,9 +6,12 @@ import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
 @WebTest
+@ParametersAreNonnullByDefault
 public class LoginTest {
 
   private static final Config CFG = Config.getInstance();

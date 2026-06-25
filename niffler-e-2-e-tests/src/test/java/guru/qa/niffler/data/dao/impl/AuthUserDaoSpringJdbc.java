@@ -10,18 +10,22 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public class AuthUserDaoSpringJdbc implements AuthUserDao {
 
   private static final Config CFG = Config.getInstance();
   private static final String URL = CFG.authJdbcUrl();
 
   @Override
+  @Nonnull
   public AuthUserEntity create(AuthUserEntity user) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(URL));
     KeyHolder kh = new GeneratedKeyHolder();
@@ -46,6 +50,7 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
   }
 
   @Override
+  @Nonnull
   public Optional<AuthUserEntity> findById(UUID id) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(URL));
     try {
@@ -62,6 +67,7 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
   }
 
   @Override
+  @Nonnull
   public List<AuthUserEntity> findAll() {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(URL));
     return jdbcTemplate.query(

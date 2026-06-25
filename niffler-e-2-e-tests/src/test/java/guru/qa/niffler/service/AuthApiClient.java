@@ -1,0 +1,31 @@
+package guru.qa.niffler.service;
+
+import guru.qa.niffler.api.AuthApi;
+import guru.qa.niffler.api.core.ThreadSafeCookieStore;
+import retrofit2.Response;
+
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.IOException;
+
+@ParametersAreNonnullByDefault
+public final class AuthApiClient extends RestClient {
+
+  private final AuthApi authApi;
+
+  public AuthApiClient() {
+    super(CFG.authUrl(), true);
+    this.authApi = create(AuthApi.class);
+  }
+
+  @Nonnull
+  public Response<Void> register(String username, String password) throws IOException {
+    authApi.requestRegisterForm().execute();
+    return authApi.register(
+        username,
+        password,
+        password,
+        ThreadSafeCookieStore.INSTANCE.xsrfCookie()
+    ).execute();
+  }
+}

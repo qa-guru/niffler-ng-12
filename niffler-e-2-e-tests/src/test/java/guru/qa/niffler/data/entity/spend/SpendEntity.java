@@ -17,6 +17,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -28,6 +30,7 @@ import static jakarta.persistence.CascadeType.PERSIST;
 @Setter
 @Entity
 @Table(name = "spend")
+@ParametersAreNonnullByDefault
 public class SpendEntity implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -54,6 +57,7 @@ public class SpendEntity implements Serializable {
   @JoinColumn(name = "category_id", referencedColumnName = "id")
   private CategoryEntity category;
 
+  @Nonnull
   public static SpendEntity fromJson(SpendJson json) {
     SpendEntity se = new SpendEntity();
     se.setId(json.id());

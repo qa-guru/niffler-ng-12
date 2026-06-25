@@ -6,7 +6,8 @@ import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.model.CurrencyValues;
 
-import java.sql.Date;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,12 +19,14 @@ import java.util.UUID;
 
 import static guru.qa.niffler.data.tpl.Connections.holder;
 
+@ParametersAreNonnullByDefault
 public class SpendDaoJdbc implements SpendDao {
 
   private static final Config CFG = Config.getInstance();
   private static final String URL = CFG.spendJdbcUrl();
 
   @Override
+  @Nonnull
   public SpendEntity create(SpendEntity spend) {
     try (PreparedStatement ps = holder(URL).connection().prepareStatement(
         "INSERT INTO spend (username, spend_date, currency, amount, description, category_id) " +
@@ -55,6 +58,7 @@ public class SpendDaoJdbc implements SpendDao {
   }
 
   @Override
+  @Nonnull
   public Optional<SpendEntity> findSpendById(UUID id) {
     try (PreparedStatement ps = holder(URL).connection().prepareStatement(
         "SELECT s.*, c.name as category_name, c.username as category_username, c.archived as category_archived " +
@@ -75,6 +79,7 @@ public class SpendDaoJdbc implements SpendDao {
   }
 
   @Override
+  @Nonnull
   public List<SpendEntity> findAllByUsername(String username) {
     try (PreparedStatement ps = holder(URL).connection().prepareStatement(
         "SELECT s.*, c.name as category_name, c.username as category_username, c.archived as category_archived " +
@@ -107,6 +112,7 @@ public class SpendDaoJdbc implements SpendDao {
   }
 
   @Override
+  @Nonnull
   public List<SpendEntity> findAll() {
     try (PreparedStatement ps = holder(URL).connection().prepareStatement(
         "SELECT * FROM spend")) {
@@ -133,6 +139,7 @@ public class SpendDaoJdbc implements SpendDao {
     }
   }
 
+  @Nonnull
   private SpendEntity mapRow(ResultSet rs) throws SQLException {
     SpendEntity se = new SpendEntity();
     se.setId(rs.getObject("id", UUID.class));

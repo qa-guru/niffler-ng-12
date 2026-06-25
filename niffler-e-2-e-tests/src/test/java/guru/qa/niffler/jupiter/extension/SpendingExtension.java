@@ -15,6 +15,8 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +24,7 @@ import java.util.Optional;
 
 import static guru.qa.niffler.jupiter.extension.TestMethodContextExtension.context;
 
+@ParametersAreNonnullByDefault
 public class SpendingExtension implements BeforeEachCallback, ParameterResolver {
 
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(SpendingExtension.class);
@@ -46,15 +49,15 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
                       new CategoryJson(
                           null,
                           spendAnno.category(),
-                          userAnno.username(),
+                          username,
                           false
                       ),
                       spendAnno.currency(),
                       spendAnno.amount(),
                       spendAnno.description(),
-                      userAnno.username()
+                      username
                   );
-                  createdSpendings.add(spendJson);
+                  createdSpendings.add(spendClient.createSpend(spendJson));
                 }
                 if (createdUser.isPresent()) {
                   createdUser.get().testData().spendings().addAll(createdSpendings);
@@ -75,10 +78,12 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
   }
 
   @Override
+  @Nonnull
   public SpendJson[] resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
     return createdSpending().orElseThrow();
   }
 
+  @Nonnull
   public static Optional<SpendJson[]> createdSpending() {
     final ExtensionContext methodContext = context();
     return Optional.ofNullable(methodContext.getStore(NAMESPACE)
