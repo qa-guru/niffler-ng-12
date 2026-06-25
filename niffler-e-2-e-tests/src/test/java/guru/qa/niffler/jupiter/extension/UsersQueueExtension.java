@@ -10,6 +10,8 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -25,6 +27,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
+@Deprecated
+@ParametersAreNonnullByDefault
 public class UsersQueueExtension implements
     BeforeTestExecutionCallback,
     AfterTestExecutionCallback,
@@ -134,6 +138,7 @@ public class UsersQueueExtension implements
 
   @Override
   @SuppressWarnings("unchecked")
+  @Nonnull
   public StaticUser resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
     final Map<IndexedUserType, StaticUser> usersForTest = extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), Map.class);
     return usersForTest.get(

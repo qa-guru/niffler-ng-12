@@ -30,6 +30,7 @@ public class ThreadSafeEntityManager implements EntityManager {
     emf = delegate.getEntityManagerFactory();
   }
 
+  @Nonnull
   private EntityManager threadEm() {
     if (threadEm.get() == null || !threadEm.get().isOpen()) {
       threadEm.set(emf.createEntityManager());
@@ -96,6 +97,7 @@ public class ThreadSafeEntityManager implements EntityManager {
   }
 
   @Override
+  @Nonnull
   public FlushModeType getFlushMode() {
     return threadEm().getFlushMode();
   }
@@ -146,6 +148,7 @@ public class ThreadSafeEntityManager implements EntityManager {
   }
 
   @Override
+  @Nonnull
   public LockModeType getLockMode(Object entity) {
     return threadEm().getLockMode(entity);
   }
@@ -156,11 +159,13 @@ public class ThreadSafeEntityManager implements EntityManager {
   }
 
   @Override
+  @Nonnull
   public Map<String, Object> getProperties() {
     return threadEm().getProperties();
   }
 
   @Override
+  @Nonnull
   public Query createQuery(String qlString) {
     return threadEm().createQuery(qlString);
   }
@@ -171,11 +176,13 @@ public class ThreadSafeEntityManager implements EntityManager {
   }
 
   @Override
+  @Nonnull
   public Query createQuery(CriteriaUpdate updateQuery) {
     return threadEm().createQuery(updateQuery);
   }
 
   @Override
+  @Nonnull
   public Query createQuery(CriteriaDelete deleteQuery) {
     return threadEm().createQuery(deleteQuery);
   }
@@ -186,6 +193,7 @@ public class ThreadSafeEntityManager implements EntityManager {
   }
 
   @Override
+  @Nonnull
   public Query createNamedQuery(String name) {
     return threadEm().createNamedQuery(name);
   }
@@ -196,36 +204,43 @@ public class ThreadSafeEntityManager implements EntityManager {
   }
 
   @Override
+  @Nonnull
   public Query createNativeQuery(String sqlString) {
     return threadEm().createNativeQuery(sqlString);
   }
 
   @Override
+  @Nonnull
   public Query createNativeQuery(String sqlString, Class resultClass) {
     return threadEm().createNativeQuery(sqlString, resultClass);
   }
 
   @Override
+  @Nonnull
   public Query createNativeQuery(String sqlString, String resultSetMapping) {
     return threadEm().createNativeQuery(sqlString, resultSetMapping);
   }
 
   @Override
+  @Nonnull
   public StoredProcedureQuery createNamedStoredProcedureQuery(String name) {
     return threadEm().createNamedStoredProcedureQuery(name);
   }
 
   @Override
+  @Nonnull
   public StoredProcedureQuery createStoredProcedureQuery(String procedureName) {
     return threadEm().createStoredProcedureQuery(procedureName);
   }
 
   @Override
+  @Nonnull
   public StoredProcedureQuery createStoredProcedureQuery(String procedureName, Class... resultClasses) {
     return threadEm().createStoredProcedureQuery(procedureName, resultClasses);
   }
 
   @Override
+  @Nonnull
   public StoredProcedureQuery createStoredProcedureQuery(String procedureName, String... resultSetMappings) {
     return threadEm().createStoredProcedureQuery(procedureName, resultSetMappings);
   }
@@ -246,6 +261,7 @@ public class ThreadSafeEntityManager implements EntityManager {
   }
 
   @Override
+  @Nonnull
   public Object getDelegate() {
     return threadEm().getDelegate();
   }
@@ -256,21 +272,25 @@ public class ThreadSafeEntityManager implements EntityManager {
   }
 
   @Override
+  @Nonnull
   public EntityTransaction getTransaction() {
     return threadEm().getTransaction();
   }
 
   @Override
+  @Nonnull
   public EntityManagerFactory getEntityManagerFactory() {
     return threadEm().getEntityManagerFactory();
   }
 
   @Override
+  @Nonnull
   public CriteriaBuilder getCriteriaBuilder() {
     return threadEm().getCriteriaBuilder();
   }
 
   @Override
+  @Nonnull
   public Metamodel getMetamodel() {
     return threadEm().getMetamodel();
   }
@@ -281,11 +301,13 @@ public class ThreadSafeEntityManager implements EntityManager {
   }
 
   @Override
+  @Nonnull
   public EntityGraph<?> createEntityGraph(String graphName) {
     return threadEm().createEntityGraph(graphName);
   }
 
   @Override
+  @Nonnull
   public EntityGraph<?> getEntityGraph(String graphName) {
     return threadEm().getEntityGraph(graphName);
   }

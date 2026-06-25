@@ -9,12 +9,15 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ParametersAreNonnullByDefault
 public class SpendApiClient implements SpendClient {
 
   private static final Config CFG = Config.getInstance();
@@ -27,6 +30,7 @@ public class SpendApiClient implements SpendClient {
   private final SpendApi spendApi = retrofit.create(SpendApi.class);
 
   @Override
+  @Nonnull
   public SpendJson createSpend(SpendJson spend) {
     final Response<SpendJson> response;
     try {
@@ -40,6 +44,7 @@ public class SpendApiClient implements SpendClient {
   }
 
   @Override
+  @Nonnull
   public CategoryJson createCategory(CategoryJson category) {
     final Response<CategoryJson> response;
     try {
@@ -53,6 +58,7 @@ public class SpendApiClient implements SpendClient {
   }
 
   @Override
+  @Nonnull
   public CategoryJson updateCategory(CategoryJson category) {
     final Response<CategoryJson> response;
     try {
@@ -65,6 +71,7 @@ public class SpendApiClient implements SpendClient {
     return response.body();
   }
 
+  @Nonnull
   public SpendJson editSpend(SpendJson spend) {
     final Response<SpendJson> response;
     try {
@@ -77,6 +84,7 @@ public class SpendApiClient implements SpendClient {
     return response.body();
   }
 
+  @Nonnull
   public SpendJson getSpend(String id) {
     final Response<SpendJson> response;
     try {
@@ -89,6 +97,7 @@ public class SpendApiClient implements SpendClient {
     return response.body();
   }
 
+  @Nonnull
   public List<SpendJson> allSpends(String username,
                                    CurrencyValues currency,
                                    String from,
@@ -115,6 +124,7 @@ public class SpendApiClient implements SpendClient {
     assertEquals(200, response.code());
   }
 
+  @Nonnull
   public List<CategoryJson> allCategory(String username) {
     final Response<List<CategoryJson>> response;
     try {

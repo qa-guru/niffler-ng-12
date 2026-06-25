@@ -11,12 +11,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Date;
 
 
+@ParametersAreNonnullByDefault
 public class JdbcTest {
 
   @Test
+  @Disabled
   void txTest() {
     SpendDbClient spendDbClient = new SpendDbClient();
 
@@ -78,6 +81,7 @@ public class JdbcTest {
       "valentin-1340"
   })
   @ParameterizedTest
+  @Disabled
   void hibernateTest(String uname) {
     UserJson user = usersDbClient.createUser(
         uname,

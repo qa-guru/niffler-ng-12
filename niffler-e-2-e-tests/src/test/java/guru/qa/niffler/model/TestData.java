@@ -1,8 +1,11 @@
 package guru.qa.niffler.model;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public record TestData(String password,
                        List<CategoryJson> categories,
                        List<SpendJson> spendings,
@@ -26,19 +29,28 @@ public record TestData(String password,
     this.friends = friends;
   }
 
+  @Nonnull
   public String[] friendsUsernames() {
     return extractUsernames(friends);
   }
 
+  @Nonnull
   public String[] incomeInvitationUsernames() {
     return extractUsernames(incomeInvitations);
   }
 
+  @Nonnull
   public String[] outcomeInvitationUsernames() {
     return extractUsernames(outcomeInvitations);
   }
 
+  @Nonnull
   public String[] extractUsernames(List<UserJson> users) {
     return users.stream().map(UserJson::username).toArray(String[]::new);
+  }
+
+  @Nonnull
+  public String[] categoryDescriptions() {
+    return categories.stream().map(CategoryJson::name).toArray(String[]::new);
   }
 }

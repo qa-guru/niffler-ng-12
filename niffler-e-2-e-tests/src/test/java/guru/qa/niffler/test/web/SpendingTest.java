@@ -5,33 +5,37 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
-import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.page.MainPage;
 import org.junit.jupiter.api.Test;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 @WebTest
+@ParametersAreNonnullByDefault
 public class SpendingTest {
 
   private static final Config CFG = Config.getInstance();
 
+  @Test
   @User(
-      username = "duck",
       spendings = @Spending(
-          amount = 89990.00,
-          description = "Обучение Niffler 2.0 юбилейный поток!",
-          category = "Обучение"
+          category = "Обучение",
+          description = "Обучение Advanced 2.0",
+          amount = 89990.00
       )
   )
-  @Test
-  void mainPageShouldBeDisplayedAfterSuccessLogin(SpendJson spendJson) {
+  void categoryDescriptionShouldBeChangedFromTable(UserJson user) {
     final String newDescription = "Обучение Niffler Next Generation";
 
     Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .successLogin("duck", "123")
+        .successLogin(user.username(), user.testData().password())
         .checkThatPageLoaded()
-        .editSpending(spendJson.description())
+        .editSpending("Обучение Advanced 2.0")
         .setNewSpendingDescription(newDescription)
-        .save()
-        .checkThatTableContainsSpending(newDescription);
+        .save();
+
+    new MainPage().checkThatTableContainsSpending(newDescription);
   }
 }

@@ -17,8 +17,8 @@ public class EntityManagers {
   private EntityManagers() {
   }
 
-  @Nonnull
   @SuppressWarnings("resource")
+  @Nonnull
   public static EntityManager em(String jdbcUrl) {
     return new ThreadSafeEntityManager(
         emfs.computeIfAbsent(

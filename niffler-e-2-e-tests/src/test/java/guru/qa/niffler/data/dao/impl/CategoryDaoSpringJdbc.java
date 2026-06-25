@@ -10,18 +10,22 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public class CategoryDaoSpringJdbc implements CategoryDao {
 
   private static final Config CFG = Config.getInstance();
   private static final String URL = CFG.spendJdbcUrl();
 
   @Override
+  @Nonnull
   public CategoryEntity create(CategoryEntity category) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(URL));
     KeyHolder kh = new GeneratedKeyHolder();
@@ -43,6 +47,7 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
   }
 
   @Override
+  @Nonnull
   public CategoryEntity update(CategoryEntity category) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(URL));
     jdbcTemplate.update(
@@ -55,6 +60,7 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
   }
 
   @Override
+  @Nonnull
   public Optional<CategoryEntity> findCategoryById(UUID id) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(URL));
     try {
@@ -71,6 +77,7 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
   }
 
   @Override
+  @Nonnull
   public Optional<CategoryEntity> findCategoryByUsernameAndCategoryName(String username, String categoryName) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(URL));
     try {
@@ -88,6 +95,7 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
   }
 
   @Override
+  @Nonnull
   public List<CategoryEntity> findAllByUsername(String username) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(URL));
     return jdbcTemplate.query(
@@ -104,6 +112,7 @@ public class CategoryDaoSpringJdbc implements CategoryDao {
   }
 
   @Override
+  @Nonnull
   public List<CategoryEntity> findAll() {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(URL));
     return jdbcTemplate.query(

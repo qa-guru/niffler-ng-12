@@ -8,14 +8,18 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.junit.platform.commons.support.SearchOption;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
 
 
+@ParametersAreNonnullByDefault
 public class IssueExtension implements ExecutionCondition {
 
   private static final GhApiClient ghApiClient = new GhApiClient();
 
   @Override
+  @Nonnull
   public ConditionEvaluationResult evaluateExecutionCondition(ExtensionContext context) {
     Optional<DisabledByIssue> annotation;
 

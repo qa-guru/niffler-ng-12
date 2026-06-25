@@ -5,6 +5,8 @@ import guru.qa.niffler.data.dao.UserdataUserDao;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.model.CurrencyValues;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,12 +17,14 @@ import java.util.UUID;
 
 import static guru.qa.niffler.data.tpl.Connections.holder;
 
+@ParametersAreNonnullByDefault
 public class UserdataUserDaoJdbc implements UserdataUserDao {
 
   private static final Config CFG = Config.getInstance();
   private static final String URL = CFG.userdataJdbcUrl();
 
   @Override
+  @Nonnull
   public UserEntity create(UserEntity user) {
     try (PreparedStatement ps = holder(URL).connection().prepareStatement(
         "INSERT INTO \"user\" (username, currency) VALUES (?, ?)",
@@ -44,6 +48,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
   }
 
   @Override
+  @Nonnull
   public Optional<UserEntity> findById(UUID id) {
     try (PreparedStatement ps = holder(URL).connection().prepareStatement("SELECT * FROM \"user\" WHERE id = ? ")) {
       ps.setObject(1, id);
@@ -61,6 +66,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
   }
 
   @Override
+  @Nonnull
   public Optional<UserEntity> findByUsername(String username) {
     try (PreparedStatement ps = holder(URL).connection().prepareStatement("SELECT * FROM \"user\" WHERE username = ?")) {
       ps.setString(1, username);
@@ -90,6 +96,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
   }
 
   @Override
+  @Nonnull
   public List<UserEntity> findAll() {
     try (PreparedStatement ps = holder(URL).connection().prepareStatement(
         "SELECT * FROM \"user\"")) {
@@ -115,6 +122,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
     }
   }
 
+  @Nonnull
   private UserEntity mapRow(ResultSet rs) throws SQLException {
     UserEntity result = new UserEntity();
     result.setId(rs.getObject("id", UUID.class));
