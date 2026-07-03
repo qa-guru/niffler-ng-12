@@ -22,7 +22,7 @@ public class SpendDaoJdbc implements SpendDao {
     private static final Config CFG = Config.getInstance();
 
     @Override
-    public SpendEntity create(SpendEntity spend) {
+    public SpendEntity create(SpendEntity spend) throws SQLException{
         try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement(
                     "INSERT INTO spend (username, spend_date, currency, amount, description, category_id)" +
@@ -49,27 +49,23 @@ public class SpendDaoJdbc implements SpendDao {
                 spend.setId(generatedKey);
                 return spend;
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void delete(UUID id) {
+    public void deleteSpend(SpendEntity spend) throws SQLException{
         try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement(
                     "DELETE FROM spend WHERE id = ?")) {
-                ps.setObject(1, id);
-                ps.execute();
+                ps.setObject(1, spend.getId());
+                ps.executeUpdate();
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
 
     @Override
-    public SpendEntity update(SpendEntity spend) {
+    public SpendEntity update(SpendEntity spend) throws SQLException{
         try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement(
                     "UPDATE spend SET username = ?, spend_date = ?, currency = ?, amount = ?, description = ?, category_id = ?)" +
@@ -88,83 +84,59 @@ public class SpendDaoJdbc implements SpendDao {
                     throw new SQLException("Updating spend failed, no rows affected.");
                 }
                 return spend;
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
             }
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public Optional<SpendEntity> findSpendById(UUID id) {
+    public Optional<SpendEntity> findSpendById(UUID id) throws SQLException {
         try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement(
                     "SELECT * FROM spend WHERE id = ?")) {
                 ps.setObject(1, id);
-
-                try (ResultSet rs = ps.executeQuery()) {
+                ps.execute();
+                try (ResultSet rs = ps.getResultSet()) {
                     if (rs.next()) {
-                        SpendEntity spend = new SpendEntity();
-                        spend.setId(id);
-                        spend.setUsername(rs.getString("username"));
-                        spend.setSpendDate(rs.getDate("spend_date"));
-                        spend.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
-                        spend.setAmount(rs.getDouble("amount"));
-                        spend.setDescription(rs.getString("description"));
-
-                        UUID categoryId = rs.getObject("category_id", UUID.class);
-                        if (categoryId != null) {
-                            CategoryEntity category = new CategoryEntity();
-                            category.setId(categoryId);
-                            spend.setCategory(category);
-                        }
-
-                        return Optional.of(spend);
+                        return Optional.of(mapRow(rs));
+                    } else {
+                        return Optional.empty();
                     }
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
                 }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
             }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
-        return Optional.empty();
     }
 
     @Override
-    public List<SpendEntity> findAllByUsername(String username) {
+    public List<SpendEntity> findAllByUsername(String username) throws SQLException{
         List<SpendEntity> listSpends = new ArrayList<>();
         try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement(
                     "SELECT * FROM spend WHERE username = ?")) {
-                ps.setObject(1, username);
-
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        SpendEntity spend = new SpendEntity();
-                        spend.setId(rs.getObject("id", UUID.class));
-                        spend.setUsername(username);
-                        spend.setSpendDate(rs.getDate("spend_date"));
-                        spend.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
-                        spend.setAmount(rs.getDouble("amount"));
-                        spend.setDescription(rs.getString("description"));
-
-                        UUID categoryId = rs.getObject("category_id", UUID.class);
-                        if (categoryId != null) {
-                            CategoryEntity category = new CategoryEntity();
-                            category.setId(categoryId);
-                            spend.setCategory(category);
-                        }
-                       listSpends.add(spend);
+                ps.setString(1, username);
+                ps.execute();
+                try (ResultSet rs = ps.getResultSet()) {
+                    while (rs.next()) {
+                        listSpends.add(mapRow(rs));
                     }
                 }
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } return listSpends;
+                return listSpends;
+            }
         }
+    }
+
+    private SpendEntity mapRow(ResultSet rs) throws SQLException {
+        SpendEntity spend = new SpendEntity();
+        spend.setId(rs.getObject("id", UUID.class));
+        spend.setUsername(rs.getString("username"));
+        spend.setSpendDate(rs.getDate("spend_date"));
+        spend.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
+        spend.setAmount(rs.getDouble("amount"));
+        spend.setDescription(rs.getString("description"));
+
+        CategoryEntity category = new CategoryEntity();
+        category.setId(rs.getObject("category_id", UUID.class));
+        spend.setCategory(category);
+
+        return spend;
+    }
 }

@@ -4,13 +4,10 @@ import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.service.SpendDbClient;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.jupiter.api.extension.ParameterResolutionException;
-import org.junit.jupiter.api.extension.ParameterResolver;
+import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
+import java.sql.SQLException;
 import java.util.Date;
 
 public class SpendingExtension implements BeforeEachCallback, ParameterResolver {
@@ -26,22 +23,27 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
                 Spending.class
         ).ifPresent(
                 anno -> {
-                    final SpendJson created = spendClient.createSpend(
-                            new SpendJson(
-                                    null,
-                                    new Date(),
-                                    new CategoryJson(
-                                            null,
-                                            anno.category(),
-                                            anno.username(),
-                                            false
-                                    ),
-                                    anno.currency(),
-                                    anno.amount(),
-                                    anno.description(),
-                                    anno.username()
-                            )
-                    );
+                    final SpendJson created;
+                    try {
+                        created = spendClient.createSpend(
+                                new SpendJson(
+                                        null,
+                                        new Date(),
+                                        new CategoryJson(
+                                                null,
+                                                anno.category(),
+                                                anno.username(),
+                                                false
+                                        ),
+                                        anno.currency(),
+                                        anno.amount(),
+                                        anno.description(),
+                                        anno.username()
+                                )
+                        );
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
                     context.getStore(NAMESPACE).put(
                             context.getUniqueId(),
                             created
