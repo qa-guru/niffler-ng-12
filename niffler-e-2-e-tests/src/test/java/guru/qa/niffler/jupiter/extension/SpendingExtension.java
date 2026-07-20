@@ -6,7 +6,6 @@ import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.SpendClient;
-import guru.qa.niffler.service.SpendDbClient;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 
-import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,19 +27,21 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
 
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(SpendingExtension.class);
 
-  private final SpendClient spendClient = new SpendDbClient();
+  private final SpendClient spendClient = SpendClient.getInstance();
 
   @Override
   public void beforeEach(ExtensionContext context) {
     AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
         .ifPresent(userAnno -> {
               if (ArrayUtils.isNotEmpty(userAnno.spendings())) {
-                final Optional<UserJson> createdUser = UserExtension.createdUser();
-                final String username = createdUser.isPresent()
-                    ? createdUser.get().username()
+
+                Optional<UserJson> testUser = UserExtension.createdUser();
+                final String username = testUser.isPresent()
+                    ? testUser.get().username()
                     : userAnno.username();
 
-                final List<SpendJson> createdSpendings = new ArrayList<>();
+                List<SpendJson> result = new ArrayList<>();
+
                 for (Spending spendAnno : userAnno.spendings()) {
                   SpendJson spendJson = new SpendJson(
                       null,
@@ -57,14 +57,19 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
                       spendAnno.description(),
                       username
                   );
-                  createdSpendings.add(spendClient.createSpend(spendJson));
+
+                  SpendJson created = spendClient.createSpend(spendJson);
+                  result.add(created);
                 }
-                if (createdUser.isPresent()) {
-                  createdUser.get().testData().spendings().addAll(createdSpendings);
+
+                if (testUser.isPresent()) {
+                  testUser.get().testData().spendings().addAll(
+                      result
+                  );
                 } else {
                   context.getStore(NAMESPACE).put(
                       context.getUniqueId(),
-                      createdSpendings.stream().toArray(SpendJson[]::new)
+                      result.stream().toArray(SpendJson[]::new)
                   );
                 }
               }
@@ -73,20 +78,20 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
   }
 
   @Override
-  public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+  public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws
+      ParameterResolutionException {
     return parameterContext.getParameter().getType().isAssignableFrom(SpendJson[].class);
   }
 
   @Override
-  @Nonnull
-  public SpendJson[] resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-    return createdSpending().orElseThrow();
+  public SpendJson[] resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws
+      ParameterResolutionException {
+    return createdSpending();
   }
 
-  @Nonnull
-  public static Optional<SpendJson[]> createdSpending() {
+  public static SpendJson[] createdSpending() {
     final ExtensionContext methodContext = context();
-    return Optional.ofNullable(methodContext.getStore(NAMESPACE)
-        .get(methodContext.getUniqueId(), SpendJson[].class));
+    return methodContext.getStore(NAMESPACE)
+        .get(methodContext.getUniqueId(), SpendJson[].class);
   }
 }

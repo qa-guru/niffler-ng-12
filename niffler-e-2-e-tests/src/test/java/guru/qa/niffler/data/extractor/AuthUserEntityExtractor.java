@@ -24,6 +24,18 @@ public class AuthUserEntityExtractor implements ResultSetExtractor<List<AuthUser
   private AuthUserEntityExtractor() {
   }
 
+  /**
+   * SELECT a.id as authority_id,
+   * authority,
+   * user_id as id,
+   * u.username,
+   * u.password,
+   * u.enabled,
+   * u.account_non_expired,
+   * u.account_non_locked,
+   * u.credentials_non_expired
+   * FROM "user" u join authority a on u.id = a.user_id WHERE u.id = 'e0e60e7f-07de-44e4-9f91-d4347f96fd7c'
+   */
   @Override
   @Nonnull
   public List<AuthUserEntity> extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -50,6 +62,7 @@ public class AuthUserEntityExtractor implements ResultSetExtractor<List<AuthUser
       AuthorityEntity authority = new AuthorityEntity();
       authority.setId(rs.getObject("authority_id", UUID.class));
       authority.setAuthority(Authority.valueOf(rs.getString("authority")));
+      authority.setUser(user);
       user.addAuthorities(authority);
     }
     return new ArrayList<>(userCache.values());

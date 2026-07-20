@@ -1,16 +1,13 @@
 package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.service.SpendClient;
-import guru.qa.niffler.service.SpendDbClient;
+import guru.qa.niffler.service.impl.SpendDbClient;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.lang.reflect.Field;
 
-@ParametersAreNonnullByDefault
 public class SpendClientInjector implements TestInstancePostProcessor {
-
   @Override
   public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
     for (Field field : testInstance.getClass().getDeclaredFields()) {

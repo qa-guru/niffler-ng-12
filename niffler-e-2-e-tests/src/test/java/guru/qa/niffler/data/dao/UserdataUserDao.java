@@ -19,8 +19,9 @@ public interface UserdataUserDao {
   @Nonnull
   Optional<UserEntity> findByUsername(String username);
 
-  void delete(UserEntity user);
-
   @Nonnull
   List<UserEntity> findAll();
+
+  @Nonnull
+  UserEntity update(UserEntity user);
 }

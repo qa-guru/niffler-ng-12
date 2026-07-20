@@ -14,13 +14,16 @@ public interface SpendDao {
   SpendEntity create(SpendEntity spend);
 
   @Nonnull
-  Optional<SpendEntity> findSpendById(UUID id);
+  List<SpendEntity> findAll();
 
   @Nonnull
   List<SpendEntity> findAllByUsername(String username);
 
-  void deleteSpend(SpendEntity spend);
+  @Nonnull
+  Optional<SpendEntity> findSpendById(UUID id);
 
   @Nonnull
-  List<SpendEntity> findAll();
+  SpendEntity update(SpendEntity spend);
+
+  void deleteSpend(SpendEntity spend);
 }

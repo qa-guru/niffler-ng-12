@@ -14,19 +14,19 @@ public interface CategoryDao {
   CategoryEntity create(CategoryEntity category);
 
   @Nonnull
-  Optional<CategoryEntity> findCategoryById(UUID id);
+  CategoryEntity update(CategoryEntity category);
 
   @Nonnull
-  CategoryEntity update(CategoryEntity categoryEntity);
+  Optional<CategoryEntity> findCategoryById(UUID id);
 
   @Nonnull
   Optional<CategoryEntity> findCategoryByUsernameAndCategoryName(String username, String categoryName);
 
   @Nonnull
+  List<CategoryEntity> findAll();
+
+  @Nonnull
   List<CategoryEntity> findAllByUsername(String username);
 
   void deleteCategory(CategoryEntity category);
-
-  @Nonnull
-  List<CategoryEntity> findAll();
 }

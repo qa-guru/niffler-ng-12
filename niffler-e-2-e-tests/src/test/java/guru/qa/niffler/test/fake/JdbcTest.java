@@ -1,29 +1,29 @@
 package guru.qa.niffler.test.fake;
 
+import guru.qa.niffler.jupiter.extension.SpendClientInjector;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.model.UserJson;
-import guru.qa.niffler.service.SpendDbClient;
-import guru.qa.niffler.service.UsersDbClient;
+import guru.qa.niffler.service.SpendClient;
+import guru.qa.niffler.service.impl.UsersDbClient;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Date;
 
-
-@ParametersAreNonnullByDefault
+@ExtendWith(SpendClientInjector.class)
 public class JdbcTest {
 
-  @Test
-  @Disabled
-  void txTest() {
-    SpendDbClient spendDbClient = new SpendDbClient();
+  private SpendClient spendCLient;
 
-    SpendJson spend = spendDbClient.createSpend(
+  @Disabled
+  @Test
+  void txTest() {
+    SpendJson spend = spendCLient.createSpend(
         new SpendJson(
             null,
             new Date(),
@@ -43,49 +43,18 @@ public class JdbcTest {
     System.out.println(spend);
   }
 
-  @Test
-  @Disabled
-  void xaTxTest() {
-    UsersDbClient usersDbClient = new UsersDbClient();
-    UserJson user = usersDbClient.createUser(
-        "valentin-4",
-        "123"
-    );
-    System.out.println(user);
-  }
-
-  @Test
-  @Disabled
-  void springJdbcTest() {
-    UsersDbClient usersDbClient = new UsersDbClient();
-    UserJson user = usersDbClient.createUserSpringJdbc(
-        new UserJson(
-            null,
-            "valentin-5",
-            null,
-            null,
-            null,
-            CurrencyValues.RUB,
-            null,
-            null,
-            null,
-            null
-        )
-    );
-    System.out.println(user);
-  }
 
   static UsersDbClient usersDbClient = new UsersDbClient();
 
   @ValueSource(strings = {
-      "valentin-1340"
+      "valentin-1341"
   })
   @ParameterizedTest
   @Disabled
-  void hibernateTest(String uname) {
+  void springJdbcTest(String uname) {
     UserJson user = usersDbClient.createUser(
         uname,
-        "123"
+        "12345"
     );
 
     usersDbClient.addIncomeInvitation(user, 1);

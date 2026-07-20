@@ -3,14 +3,12 @@ package guru.qa.niffler.data.entity.userdata;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
 @Getter
 @Setter
-@ParametersAreNonnullByDefault
 public class FriendShipId implements Serializable {
 
   private UUID requester;

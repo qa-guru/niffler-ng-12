@@ -6,27 +6,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
-public record TestData(String password,
-                       List<CategoryJson> categories,
-                       List<SpendJson> spendings,
-                       List<UserJson> incomeInvitations,
-                       List<UserJson> outcomeInvitations,
-                       List<UserJson> friends) {
+public record TestData(@Nonnull String password,
+                       @Nonnull List<UserJson> incomeInvitations,
+                       @Nonnull List<UserJson> outcomeInvitations,
+                       @Nonnull List<UserJson> friends,
+                       @Nonnull List<CategoryJson> categories,
+                       @Nonnull List<SpendJson> spendings
+) {
+
   public TestData(String password) {
     this(password, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
   }
 
-  public TestData(String password, List<UserJson> incomeInvitations, List<UserJson> outcomeInvitations, List<UserJson> friends) {
-    this(password, new ArrayList<>(), new ArrayList<>(), incomeInvitations, outcomeInvitations, friends);
+  public TestData(String password, List<UserJson> friends, List<UserJson> incomeInvitations, List<UserJson> outcomeInvitations) {
+    this(password, friends, incomeInvitations, outcomeInvitations, new ArrayList<>(), new ArrayList<>());
   }
 
-  public TestData(String password, List<CategoryJson> categories, List<SpendJson> spendings, List<UserJson> incomeInvitations, List<UserJson> outcomeInvitations, List<UserJson> friends) {
-    this.password = password;
-    this.categories = categories;
-    this.spendings = spendings;
-    this.incomeInvitations = incomeInvitations;
-    this.outcomeInvitations = outcomeInvitations;
-    this.friends = friends;
+  @Nonnull
+  public TestData addCategories(List<CategoryJson> categories) {
+    return new TestData(
+        this.password,
+        this.friends,
+        this.incomeInvitations,
+        this.outcomeInvitations,
+        categories,
+        this.spendings
+    );
+  }
+
+  @Nonnull
+  public TestData addSpendings(List<SpendJson> spendings) {
+    return new TestData(
+        this.password,
+        this.friends,
+        this.incomeInvitations,
+        this.outcomeInvitations,
+        this.categories,
+        spendings
+    );
   }
 
   @Nonnull
@@ -35,22 +52,22 @@ public record TestData(String password,
   }
 
   @Nonnull
-  public String[] incomeInvitationUsernames() {
+  public String[] incomeInvitationsUsernames() {
     return extractUsernames(incomeInvitations);
   }
 
   @Nonnull
-  public String[] outcomeInvitationUsernames() {
+  public String[] outcomeInvitationsUsernames() {
     return extractUsernames(outcomeInvitations);
-  }
-
-  @Nonnull
-  public String[] extractUsernames(List<UserJson> users) {
-    return users.stream().map(UserJson::username).toArray(String[]::new);
   }
 
   @Nonnull
   public String[] categoryDescriptions() {
     return categories.stream().map(CategoryJson::name).toArray(String[]::new);
+  }
+
+  @Nonnull
+  private String[] extractUsernames(List<UserJson> users) {
+    return users.stream().map(UserJson::username).toArray(String[]::new);
   }
 }
