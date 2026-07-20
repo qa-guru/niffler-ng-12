@@ -6,12 +6,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 
 import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ParametersAreNonnullByDefault
 public record UserJson(
     @JsonProperty("id")
     UUID id,
@@ -35,7 +34,7 @@ public record UserJson(
     TestData testData) {
 
   @Nonnull
-  public static UserJson fromEntity(UserEntity entity, FriendshipStatus friendshipStatus) {
+  public static UserJson fromEntity(@Nonnull UserEntity entity, @Nullable FriendshipStatus friendshipStatus) {
     return new UserJson(
         entity.getId(),
         entity.getUsername(),
@@ -51,7 +50,7 @@ public record UserJson(
   }
 
   @Nonnull
-  public UserJson addTestData(TestData testData) {
+  public UserJson addTestData(@Nonnull TestData testData) {
     return new UserJson(
         id,
         username,

@@ -11,8 +11,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
@@ -21,7 +19,6 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "category")
-@ParametersAreNonnullByDefault
 public class CategoryEntity implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -37,7 +34,6 @@ public class CategoryEntity implements Serializable {
   @Column(nullable = false)
   private boolean archived;
 
-  @Nonnull
   public static CategoryEntity fromJson(CategoryJson json) {
     CategoryEntity ce = new CategoryEntity();
     ce.setId(json.id());

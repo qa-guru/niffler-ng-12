@@ -17,5 +17,8 @@ public interface AuthUserDao {
   Optional<AuthUserEntity> findById(UUID id);
 
   @Nonnull
+  Optional<AuthUserEntity> findByUsername(String username);
+
+  @Nonnull
   List<AuthUserEntity> findAll();
 }

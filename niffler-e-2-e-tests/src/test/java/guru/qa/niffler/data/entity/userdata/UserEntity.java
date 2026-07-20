@@ -17,8 +17,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -34,7 +32,6 @@ import java.util.stream.Stream;
 @Setter
 @Entity
 @Table(name = "\"user\"")
-@ParametersAreNonnullByDefault
 public class UserEntity implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -117,7 +114,6 @@ public class UserEntity implements Serializable {
     }
   }
 
-  @Nonnull
   public static UserEntity fromJson(UserJson json) {
     UserEntity ue = new UserEntity();
     ue.setId(json.id());

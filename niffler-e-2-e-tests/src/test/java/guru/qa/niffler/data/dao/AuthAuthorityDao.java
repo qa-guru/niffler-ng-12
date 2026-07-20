@@ -5,6 +5,7 @@ import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.UUID;
 
 @ParametersAreNonnullByDefault
 public interface AuthAuthorityDao {
@@ -12,4 +13,7 @@ public interface AuthAuthorityDao {
 
   @Nonnull
   List<AuthorityEntity> findAll();
+
+  @Nonnull
+  List<AuthorityEntity> findAllByUserId(UUID userId);
 }

@@ -12,7 +12,7 @@ buildscript {
         springJdbcVersion = '6.2.12'
         springCryptoVersion = '6.5.6'
         p6spyVersion = '3.9.1'
-        hibernateVersion = '6.6.13.Final'
+        hibernateVersion = '7.0.0.Final'
         kafkaClientsVersion = '4.1.1'
         saajVersion = '3.0.4'
         springDataCommonsVersion = '3.5.5'

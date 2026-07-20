@@ -1,6 +1,8 @@
 package guru.qa.niffler.data.tpl;
 
-import javax.annotation.Nonnull;
+import guru.qa.niffler.data.jdbc.Connections;
+import guru.qa.niffler.data.jdbc.JdbcConnectionHolder;
+
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.Connection;
@@ -20,7 +22,6 @@ public class JdbcTransactionTemplate {
     this.holder = Connections.holder(jdbcUrl);
   }
 
-  @Nonnull
   public JdbcTransactionTemplate holdConnectionAfterAction() {
     this.closeAfterAction.set(false);
     return this;
@@ -29,7 +30,9 @@ public class JdbcTransactionTemplate {
   @Nullable
   public <T> T execute(Supplier<T> action, int isolationLvl) {
     Connection connection = null;
+    int initIsolationLevel = TRANSACTION_READ_COMMITTED;
     try {
+      initIsolationLevel = connection.getTransactionIsolation();
       connection = holder.connection();
       connection.setTransactionIsolation(isolationLvl);
       connection.setAutoCommit(false);
@@ -48,12 +51,18 @@ public class JdbcTransactionTemplate {
       }
       throw new RuntimeException(e);
     } finally {
+      try {
+        connection.setTransactionIsolation(initIsolationLevel);
+      } catch (SQLException e) {
+        // noop
+      }
       if (closeAfterAction.get()) {
         holder.close();
       }
     }
   }
 
+  @Nullable
   public <T> T execute(Supplier<T> action) {
     return execute(action, TRANSACTION_READ_COMMITTED);
   }

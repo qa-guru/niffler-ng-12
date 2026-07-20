@@ -5,7 +5,6 @@ import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.SpendClient;
-import guru.qa.niffler.service.SpendDbClient;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -15,11 +14,8 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 
-import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,45 +30,50 @@ public class CategoryExtension implements
 
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
 
-  private final SpendClient spendClient = new SpendDbClient();
+  private final SpendClient spendClient = SpendClient.getInstance();
 
   @Override
   public void beforeEach(ExtensionContext context) {
     AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
         .ifPresent(userAnno -> {
           if (ArrayUtils.isNotEmpty(userAnno.categories())) {
-            final Optional<UserJson> createdUser = UserExtension.createdUser();
-            final String username = createdUser.isPresent()
-                ? createdUser.get().username()
+
+            final Optional<UserJson> testUser = UserExtension.createdUser();
+            final String username = testUser.isPresent()
+                ? testUser.get().username()
                 : userAnno.username();
 
-            final List<CategoryJson> createdCategories = new ArrayList<>();
+            final List<CategoryJson> result = new ArrayList<>();
+
             for (Category categoryAnno : userAnno.categories()) {
               CategoryJson category = new CategoryJson(
                   null,
-                  randomCategoryName(),
+                  "".equals(categoryAnno.name()) ? randomCategoryName() : categoryAnno.name(),
                   username,
                   categoryAnno.archived()
               );
-
               CategoryJson created = spendClient.createCategory(category);
+
               if (categoryAnno.archived()) {
                 CategoryJson archivedCategory = new CategoryJson(
                     created.id(),
                     created.name(),
-                    username,
+                    created.username(),
                     true
                 );
                 created = spendClient.updateCategory(archivedCategory);
               }
-              createdCategories.add(created);
+              result.add(created);
             }
-            if (createdUser.isPresent()) {
-              createdUser.get().testData().categories().addAll(createdCategories);
+
+            if (testUser.isPresent()) {
+              testUser.get().testData().categories().addAll(
+                  result
+              );
             } else {
               context.getStore(NAMESPACE).put(
                   context.getUniqueId(),
-                  createdCategories.stream().toArray(CategoryJson[]::new)
+                  result.stream().toArray(CategoryJson[]::new)
               );
             }
           }
@@ -81,24 +82,18 @@ public class CategoryExtension implements
 
   @Override
   public void afterTestExecution(ExtensionContext context) {
-    final Optional<UserJson> createdUser = UserExtension.createdUser();
-    List<CategoryJson> categories;
-    if (createdUser.isPresent()) {
-      categories = createdUser.get().testData().categories();
-    } else {
-      Optional<CategoryJson[]> categoriesArray = createdCategory();
-      categories = categoriesArray.map(Arrays::asList).orElse(Collections.emptyList());
-    }
-
-    for (CategoryJson category : categories) {
-      if (category != null && !category.archived()) {
-        category = new CategoryJson(
-            category.id(),
-            category.name(),
-            category.username(),
-            true
-        );
-        spendClient.updateCategory(category);
+    CategoryJson[] categories = createdCategory();
+    if (categories != null) {
+      for (CategoryJson category : categories) {
+        if (!category.archived()) {
+          CategoryJson archivedCategory = new CategoryJson(
+              category.id(),
+              category.name(),
+              category.username(),
+              true
+          );
+          spendClient.updateCategory(archivedCategory);
+        }
       }
     }
   }
@@ -110,16 +105,14 @@ public class CategoryExtension implements
   }
 
   @Override
-  @Nonnull
   public CategoryJson[] resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws
       ParameterResolutionException {
-    return createdCategory().orElseThrow();
+    return createdCategory();
   }
 
-  @Nonnull
-  public static Optional<CategoryJson[]> createdCategory() {
+  public static CategoryJson[] createdCategory() {
     final ExtensionContext methodContext = context();
-    return Optional.ofNullable(methodContext.getStore(NAMESPACE)
-        .get(methodContext.getUniqueId(), CategoryJson[].class));
+    return methodContext.getStore(NAMESPACE)
+        .get(methodContext.getUniqueId(), CategoryJson[].class);
   }
 }
